@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+enum UserRole {
+  employee
+  manager
+}
+
+enum Category {
+  food
+  others
+  services
+  transport
+  accommodation
+}
+
+model User {
+  id String @id @default(uuid())
+  name      String  
+  email     String    @unique
+  password  String
+  role      UserRole  @default(employee)
+  refunda   Refunds[]
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model Refunds {
+  id          String   @id @default(uuid())
+  amount      Float
+  category    Category
+  filename    String
+  description String
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String   @map("user_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("refunds")
+}
